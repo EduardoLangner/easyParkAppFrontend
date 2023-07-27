@@ -7,3 +7,9 @@ export const Container = styled.SafeAreaView`
     justify-content: center;
     align-items: center;
 `
+
+export const Image = styled.Image`
+    width: 80%;
+    height: 30%;
+`
+
