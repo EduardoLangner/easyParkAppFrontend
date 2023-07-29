@@ -14,7 +14,7 @@ export const ImageSignupShort = styled.Image`
     resize-mode: cover;
 `
 
-export const SignInButtonSignUp = styled.View`
+export const SignInButtonSignUp = styled.TouchableOpacity`
     align-items: center;
     position: absolute;
     z-index: 2;
@@ -48,17 +48,18 @@ export const ImageLogo = styled.Image`
 export const LoginText = styled.Text`
     font-weight: bold;
     font-size: 28px;
-    top: 25%;
+    top: 22%;
     align-items: center;
     font-weight: bold;
 `
+
 export const InputArea = styled.View`
     align-items: center;    
-    margin-top: 51%; 
+    margin-top: 47%; 
     width: 87%;
 `
 
-export const CustomButton = styled.TouchableOpacity`
+export const CustomButtonLogin = styled.TouchableOpacity`
     background-color: #6B92A4;
     border-radius: 12px;
     align-items: center;
@@ -68,7 +69,7 @@ export const CustomButton = styled.TouchableOpacity`
     justify-content: center;
 `
 
-export const CustomButtonText = styled.Text`
+export const CustomButtonLoginText = styled.Text`
     color: #ffffff;
     font-size: 20px;
     font-weight: bold;
@@ -76,20 +77,19 @@ export const CustomButtonText = styled.Text`
 export const SocialLogosContainer = styled.View`
     flex-direction: row;
     align-items: center;
-    margin-top: -10%;
-
+    margin-top: -25%;
 `
 
 export const GoogleLogo = styled.Image`
     width: 13%;
     height: 50px;    
-    margin-right: 10%x;
+    margin-right: 10%;
 `
 
 export const FacebookLogo = styled.Image`
     width: 13%;
     height: 50px;     
-    margin-right: 1%;
+    margin-right: 10%;
 `
 
 export const TwitterLogo = styled.Image`
@@ -97,11 +97,13 @@ export const TwitterLogo = styled.Image`
     height: 50px; 
 `
 
-export const ButtonForgePassword = styled.TouchableOpacity`
+export const ButtonForgetPassword = styled.TouchableOpacity`
     margin-top: 16px;
 `
 
-export const ButtonForgePasswordText = styled.Text`
-    color: #007bff;
+export const ButtonForgetPasswordText = styled.Text`
+    color: #000000;
     font-size: 16px;
+    top: 100%;
+    textDecorationLine: underline;
 `
