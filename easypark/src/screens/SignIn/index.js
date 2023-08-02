@@ -45,8 +45,8 @@ export default() => {
                 <SignInButtonSignUpText fontSize="22px" textColor="#ffffff">&nbsp;&nbsp;Signup</SignInButtonSignUpText>
             </SignInButtonSignUp>
             <ImageEllipsis source={Ellipsis}/>
-            <LoginText>Login</LoginText>
             <ImageLogo source={Logo} />
+            <LoginText>Login</LoginText>
             <InputArea>
                 <Input
                     placeholder="E-mail"
@@ -65,11 +65,11 @@ export default() => {
                 <CustomButton
                     color="#6B92A4"
                     width="100%"
-                    height="18%"
+                    height="40%"
                     fontSize="24px"
                     textColor="#FFFFFF"
                     text="Entrar"
-                    marginTop="10%"
+                    marginTop="8%"
                     marginBottom="20%"
                 />
             </InputArea>

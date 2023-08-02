@@ -2,108 +2,86 @@ import React from 'react';
 import styled from 'styled-components/native';
 
 export const Container = styled.View`
-    flex: 1;
-    justify-content: flex-start;
-    align-items: center;
     background-color: #ffffff;
+    align-items: center;
+    width: 100%;
 `
 
 export const ImageSignupShort = styled.Image`
     width: 100%;
-    height: 23%;
-    resize-mode: cover;
+    max-height: 15%;
+    min-height: 15%;
 `
 
 export const SignInButtonSignUp = styled.TouchableOpacity`
     align-items: center;
-    position: absolute;
-    z-index: 2;
-    width: 100px;
     flex-direction: row;
-    margin-top: 5%
+    z-index: 2;
+    margin-top: -30%;
 `
 
 export const SignInButtonSignUpText = styled.Text`
     font-size: ${props => (props.fontSize ? props.fontSize : '16px')};
     color: ${props => (props.textColor ? props.textColor : '#000000')};
     font-weight: bold;
-    top: 10%;
 `
 
 export const ImageEllipsis = styled.Image`
-    width: 100%;
-    position: absolute;
-    top: -6%;
-
+    width: 140%;    
+    max-height: 25%;
+    min-height: 20%;
+    margin-top: 10%;
 `
 export const ImageLogo = styled.Image`
-    align-items: center;    
-    width: 65%; 
-    height: 20%; 
-    position: absolute;
-    top: 25%; 
-    resize-mode: contain; 
+    width: 70%;    
+    height: 110px;
+    z-index: 2;
+    margin-top: -30%;
 `
 
 export const LoginText = styled.Text`
+    font-size: 30px;
     font-weight: bold;
-    font-size: 28px;
-    top: 22%;
-    align-items: center;
-    font-weight: bold;
+    margin-top: 10%;
 `
 
 export const InputArea = styled.View`
-    align-items: center;    
-    margin-top: 47%; 
-    width: 87%;
-`
-
-export const CustomButtonLogin = styled.TouchableOpacity`
-    background-color: #6B92A4;
-    border-radius: 12px;
     align-items: center;
+    width: 85%;
+    height: 15%;
     margin-top: 10%;
-    width: 100%;
-    height: 20%;
-    justify-content: center;
-`
-
-export const CustomButtonLoginText = styled.Text`
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: bold;
 `
 export const SocialLogosContainer = styled.View`
     flex-direction: row;
-    align-items: center;
-    margin-top: -25%;
-`
+    width: 70%;
+    height: 7%;
+    margin-top: 20%;
+    justify-content: space-between;
+`   
 
 export const GoogleLogo = styled.Image`
-    width: 13%;
-    height: 50px;    
-    margin-right: 10%;
+    width: 20%;
+    height: 80%;
 `
 
 export const FacebookLogo = styled.Image`
-    width: 13%;
-    height: 50px;     
-    margin-right: 10%;
+    width: 20%;
+    height: 80%;
 `
 
 export const TwitterLogo = styled.Image`
-    width: 13%;
-    height: 50px; 
+    width: 20%;
+    height: 80%;
 `
 
 export const ButtonForgetPassword = styled.TouchableOpacity`
-    margin-top: 16px;
+    width: 70%;
+    align-items: center;
+    margin-top: 5%;
 `
 
 export const ButtonForgetPasswordText = styled.Text`
-    color: #000000;
-    font-size: 16px;
-    top: 100%;
-    textDecorationLine: underline;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: underline;
 `

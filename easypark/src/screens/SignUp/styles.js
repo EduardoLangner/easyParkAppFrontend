@@ -19,16 +19,14 @@ export const ImageLogo = styled.Image`
     align-items: center;    
     width: 60%; 
     height: 20%; 
-    position: absolute;
-    top: 2%; 
+    margin-top: 5%; 
     resize-mode: contain; 
 `;
 
 export const SignUpText = styled.Text`
     font-weight: bold;
     font-size: 28px;
-    top: 20%;
-    align-items: center;
+    margin-top: 0%;
     color: #ffffff;
 `
 
@@ -37,14 +35,14 @@ export const InputArea = styled.View`
     align-items: center;
     background-color: rgba(255, 255, 255, 0.9);
     width: 85%;
-    height: 50%;
-    border-radius: 20px;
-    top: 21%;
+    height: 45%;
+    border-radius: 20px; 
+    margin-top: 5%;
 `
 
 export const InputContainer = styled.View`
     width: 87%;
-    top: -3%;
+    margin-top: -5%;
 `
 
 export const ImageEllipsis = styled.Image`
@@ -57,11 +55,8 @@ export const SignUpButtonSignIn = styled.TouchableOpacity`
     align-items: center;
     width: 100%;
     height: 60px; 
-    padding-bottom: 20px; 
     flex-direction: row;
     justify-content: center; 
-    position: absolute;
-    bottom: 0; 
     z-index: 2;
 `
 
