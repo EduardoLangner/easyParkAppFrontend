@@ -17,7 +17,7 @@ export const SignInButtonSignUp = styled.TouchableOpacity`
     align-items: center;
     flex-direction: row;
     z-index: 2;
-    margin-top: -30%;
+    margin-top: -27%;
 `
 
 export const SignInButtonSignUpText = styled.Text`
@@ -30,7 +30,7 @@ export const ImageEllipsis = styled.Image`
     width: 140%;    
     max-height: 25%;
     min-height: 20%;
-    margin-top: 10%;
+    margin-top: 5%;
 `
 export const ImageLogo = styled.Image`
     width: 70%;    

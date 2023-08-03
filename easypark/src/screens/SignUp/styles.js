@@ -5,8 +5,7 @@ export const Container = styled.View`
     flex: 1;
     justify-content: flex-start;
     align-items: center;
-    background-color: #ffffff;
-`
+    background-color: #ffffff;`
 
 export const ImageBackGround = styled.Image`
     width: 100%;
@@ -35,20 +34,25 @@ export const InputArea = styled.View`
     align-items: center;
     background-color: rgba(255, 255, 255, 0.9);
     width: 85%;
-    height: 45%;
+    height: 350px;
     border-radius: 20px; 
     margin-top: 5%;
+    display:flex;
 `
 
 export const InputContainer = styled.View`
     width: 87%;
-    margin-top: -5%;
+    height: 350px;
+    display: flex;
+    margin-top: 15%;
 `
 
 export const ImageEllipsis = styled.Image`
-    width: 100%;
+    width: 120%;
     position: absolute;
-    top: 68%;
+    margin-top: 715px;
+    z-index: 0;
+    height: 20%;
 `
 
 export const SignUpButtonSignIn = styled.TouchableOpacity`
@@ -58,6 +62,7 @@ export const SignUpButtonSignIn = styled.TouchableOpacity`
     flex-direction: row;
     justify-content: center; 
     z-index: 2;
+    margin-top: 5%;
 `
 
 export const SignUpButtonSignInText = styled.Text`
