@@ -5,7 +5,8 @@ export const Container = styled.View`
     flex: 1;
     justify-content: flex-start;
     align-items: center;
-    background-color: #ffffff;`
+    background-color: #ffffff;
+`
 
 export const ImageBackGround = styled.Image`
     width: 100%;
@@ -62,7 +63,7 @@ export const SignUpButtonSignIn = styled.TouchableOpacity`
     flex-direction: row;
     justify-content: center; 
     z-index: 2;
-    margin-top: 5%;
+    margin-top: 2%;
 `
 
 export const SignUpButtonSignInText = styled.Text`

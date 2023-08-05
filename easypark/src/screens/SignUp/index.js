@@ -10,6 +10,8 @@
     import CustomButton from '../../components/Button'
     import Input from '../../components/Input'
 
+    import Api from '../../Api.js'
+
     export default () => {
 
         const navigation = useNavigation() 
@@ -26,10 +28,24 @@
         const [passwordField, setPasswordField] = useState('')
         const [confirmPasswordField, setConfirmPasswordField] = useState('')
 
-        handleSignUpButtonSignInClick = () => {
+        const handleSignUpButtonSignInClick = () => {
             navigation.reset({
                 routes: [{name: 'SignIn'}]
             })
+        }
+
+        const handleSignUpClick = async () => {
+            if(nameField != '' && cpfField != '' && emailField != '' && passwordField != '') {
+                let json = await Api.signUp(nameField, cpfField, emailField, passwordField)
+                console.log(json)
+                if(json.token) {
+                    alert("Deu certo!")
+                }else{
+                    alert("Error: " + json.error)
+                }
+            }else{
+                alert("Preencha todos os campos!")
+            }
         }
 
         return (
@@ -83,6 +99,7 @@
                     text="Criar"
                     marginTop="8%"
                     marginBottom="10%"
+                    onPress={handleSignUpClick}
                 />
                 <SignUpButtonSignIn onPress={handleSignUpButtonSignInClick}>
                     <SignUpButtonSignInText fontSize="18px" textColor="#9F9A9A">&nbsp;Or</SignUpButtonSignInText>

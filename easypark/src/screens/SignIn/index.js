@@ -14,6 +14,8 @@ import Twitter from '../../assets/TwitterLogo.png'
 import Input from '../../components/Input'
 import CustomButton  from '../../components/Button'
 
+import Api from '../../Api.js'
+
 export default() => {
 
     const navigation = useNavigation()  
@@ -21,16 +23,30 @@ export default() => {
     const [emailField, setEmailField] = useState('')
     const [passwordField, setPasswordField] = useState('')
 
-    handleSignInButtonSignUpClick = () => {
+    const handleSignInButtonSignUpClick = () => {
         navigation.reset({
             routes: [{name: 'SignUp'}]
         })
     }
 
-    handleCustomButtonLoginClick = () => {
+    const handleLoginClick = async () => {
+        console.log('Botão pressionado!');
+        console.log('aaaaaaaaaEmail:', emailField);
+    console.log('aaaaaaaaaSenha:', passwordField);
+        if(emailField != '' && passwordField != '') {
+            let json = await Api.signIn(emailField, passwordField)
+            console.log(json)
+            if(json.token) {
+                alert("Deu certo!")
+            }else{
+                alert("E-mail e/ou senha errados!")
+            }
+        }else{
+            alert("Preencha todos os campos!")
+        }
     }
 
-    handleButtonForgetPasswordClick = () => {
+    const handleButtonForgetPasswordClick = () => {
     }
 
     const emailIcon = { type: 'Feather', name: 'mail' };
@@ -71,6 +87,7 @@ export default() => {
                     text="Entrar"
                     marginTop="8%"
                     marginBottom="20%"
+                    onPress={handleLoginClick}
                 />
             </InputArea>
             <SocialLogosContainer>
