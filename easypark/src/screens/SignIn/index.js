@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { StatusBar } from 'react-native'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Container, InputArea, ButtonForgetPassword, ButtonForgetPasswordText, SignInButtonSignUp, SignInButtonSignUpText, ImageSignupShort, ImageLogo, SocialLogosContainer, LoginText, ImageEllipsis, GoogleLogo, FacebookLogo, TwitterLogo} from './styles'
 
@@ -30,14 +31,14 @@ export default() => {
     }
 
     const handleLoginClick = async () => {
-        console.log('Botão pressionado!');
-        console.log('aaaaaaaaaEmail:', emailField);
-    console.log('aaaaaaaaaSenha:', passwordField);
         if(emailField != '' && passwordField != '') {
-            let json = await Api.signIn(emailField, passwordField)
-            console.log(json)
-            if(json.token) {
-                alert("Deu certo!")
+            let res = await Api.signIn(emailField, passwordField)
+            
+            if(res.token) {
+                await AsyncStorage.setItem('token', res.token)
+                navigation.reset({
+                    routes: [{name: 'Home'}]
+                })
             }else{
                 alert("E-mail e/ou senha errados!")
             }

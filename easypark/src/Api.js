@@ -1,8 +1,9 @@
-const BASE_API = 'http://192.168.113.125:3000'
+const BASE_API = 'http://192.168.129.148:3000'
 
 export default {
 
     checkToken: async (token) => {
+        
     },
 
     signIn: async (email, password) => {

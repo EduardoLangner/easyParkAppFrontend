@@ -2,6 +2,7 @@
     import { StatusBar } from 'react-native'; 
     import { useNavigation } from '@react-navigation/native'
     import { Container, ImageBackGround, ImageLogo, SignUpText, InputArea, ImageEllipsis, SignUpButtonSignIn, SignUpButtonSignInText, InputContainer  } from './styles'
+    import AsyncStorage from '@react-native-async-storage/async-storage';
 
     import ImageBG from '../../assets/SignUpLong.png'
     import Logo from '../../assets/LogoWhite.png'
@@ -36,12 +37,14 @@
 
         const handleSignUpClick = async () => {
             if(nameField != '' && cpfField != '' && emailField != '' && passwordField != '') {
-                let json = await Api.signUp(nameField, cpfField, emailField, passwordField)
-                console.log(json)
-                if(json.token) {
-                    alert("Deu certo!")
+                let res = await Api.signUp(nameField, cpfField, emailField, passwordField)
+                if(res.token) {
+                    await AsyncStorage.setItem('token', res.token)
+                    navigation.reset({
+                        routes: [{name: 'Home'}]
+                    })
                 }else{
-                    alert("Error: " + json.error)
+                    alert("Error: " + res.error)
                 }
             }else{
                 alert("Preencha todos os campos!")
