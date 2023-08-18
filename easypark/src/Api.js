@@ -2,12 +2,20 @@ const BASE_API = 'http://192.168.129.148:3000'
 
 export default {
 
-    checkToken: async (token) => {
-        
-    },
+    // refreshToken: async (token) => {
+    //     const req = await fetch(`${BASE_API}/refreshToken`, {
+    //         method: 'POST',
+    //         headers: {
+    //             Accept: 'application/json',
+    //             'Content-Type': 'application/json',
+    //             authorization: `Bearer ${token}`
+    //         }
+    //     })
+    //     const json = await req.json()
+    //     return json
+    // },
 
     signIn: async (email, password) => {
-        console.log('email: ' + email + ' password: ' + password)
         const req = await fetch(`${BASE_API}/login`, {
             method: 'POST',
             headers: {
