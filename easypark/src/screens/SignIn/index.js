@@ -38,7 +38,7 @@ export default() => {
                 await AsyncStorage.setItem('token', res.token)
                 console.log(res.token)
                 navigation.reset({
-                    routes: [{name: 'Home'}]
+                    routes: [{name: 'MainTab'}]
                 })
             }else{
                 alert("E-mail e/ou senha errados!")

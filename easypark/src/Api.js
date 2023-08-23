@@ -1,4 +1,4 @@
-const BASE_API = 'http://192.168.129.148:3000'
+const BASE_API = 'http://192.168.0.113:3000'
 
 export default {
 
