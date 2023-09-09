@@ -2,7 +2,7 @@ import React from 'react'
 import { InputArea, Input, IconContainer } from './styles'
 import { Feather, FontAwesome } from 'react-native-vector-icons'
 
-export default ({ placeholder, icon, value, onChangeText, password, width, heigth }) => {
+export default ({ placeholder, icon, value, onChangeText, password, width, heigth, fontSize }) => {
   const renderIcon = () => {
     const { type, name, size } = icon
 
@@ -25,6 +25,8 @@ export default ({ placeholder, icon, value, onChangeText, password, width, heigt
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={password}
+        fontSize={fontSize}
+        s
       />
     </InputArea>
   )

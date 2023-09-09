@@ -17,7 +17,7 @@ export const Input = styled.TextInput`
     bottom: 0%;
     margin-bottom: -5%;
     width: 90%;
-    font-size: 16px;
+    font-size: ${props => props.fontSize || '16px'};
 `
 
 export const IconContainer = styled.View`

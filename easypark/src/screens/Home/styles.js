@@ -46,7 +46,14 @@ export const AddPlateText = styled.Text`
     font-size: 25px;
     color: #ffffff;
 `
+
 export const ImageCar = styled.Image`
     width: 30%;    
     height: 50px;
+`
+
+export const InputArea = styled.View`
+    width: 100%;
+    align-items: center;
+    justify-content: center;
 `
