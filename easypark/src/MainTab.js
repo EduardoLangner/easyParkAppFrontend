@@ -33,25 +33,25 @@ export default () => {
                     fontSize: 12,
                 },
             }}>
-                <Tab.Screen name="Home" component={Home} options={{
+                <Tab.Screen name="Ativar" component={Home} options={{
                     headerShown: false,
                     tabBarIcon: ({ color }) => (
                         <Entypo name="controller-play" color={color} size={iconSizeplay} style={{ marginBottom: -5 }} />
                     ),
                 }} />
-                <Tab.Screen name="Payment" component={Payment} options={{
+                <Tab.Screen name="Recarregar" component={Payment} options={{
                     headerShown: false,
                     tabBarIcon: ({ color }) => (
                         <FontAwesome name="credit-card-alt" color={color} size={iconSizeCard} style={{ marginBottom: -5 }}/>
                     ),
                 }} />
-                <Tab.Screen name="Maps" component={Maps} options={{
+                <Tab.Screen name="Vagas" component={Maps} options={{
                     headerShown: false,
                     tabBarIcon: ({ color }) => (
                         <FontAwesome5 name="map-marked-alt" color={color} size={iconSizeMap} style={{ marginBottom: -5 }}/>
                     ),
                 }} />
-                <Tab.Screen name="Others" component={Others} options={{
+                <Tab.Screen name="Outros" component={Others} options={{
                     headerShown: false,
                     tabBarIcon: ({ color }) => (
                         <Ionicons name="ellipsis-horizontal-circle-sharp" color={color} size={iconSizeOthers} style={{ marginBottom: -5 }}/>

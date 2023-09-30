@@ -101,7 +101,7 @@ export default () => {
                 <CustomTextTime fontSize="28px" color="#ffffff">R$ 0,00</CustomTextTime>
             </CustomTextTimeContainer>
             <CustomButton
-                color="#7CD07C"
+                color="#1AD61A"
                 width="60%"
                 height="9%"
                 fontSize="30px" 
@@ -132,7 +132,7 @@ export default () => {
                             fontSize="20px"
                         />
                         <CustomButton
-                            color="#7CD07C"
+                            color="#1AD61A"
                             width="200px"
                             height="35%"
                             fontSize="25px" 

@@ -18,7 +18,7 @@ export default () => {
 
     return (
         <View style={{ flex: 1 }}>
-            <StatusBar translucent backgroundColor="transparent"/>
+            <StatusBar translucent backgroundColor="transparent" barStyle="white"/>
             <Tab.Navigator screenOptions={{
                 tabBarActiveTintColor: '#ffffff',
                 tabBarInactiveTintColor: '#000000',
