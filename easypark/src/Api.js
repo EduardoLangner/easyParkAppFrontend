@@ -66,6 +66,33 @@ export default {
         });
         const json = await req.json();
         return json;
-    }
+    },
+
+    addCreditCard: async (name, number, date, cvv, userID, token) => {
+        const req = await fetch(`${BASE_API}/creditcard`, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${token}` 
+            },
+            body: JSON.stringify({ name, number, date, cvv, user_id: userID }),
+        });
+        const json = await req.json();
+        return json;
+    },
+
+    getCreditCard: async (userID, token) => {
+        const req = await fetch(`${BASE_API}/creditcardbyuser/${userID}`, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${token}` 
+            }
+        });
+        const json = await req.json();
+        return json;
+    },
     
 }

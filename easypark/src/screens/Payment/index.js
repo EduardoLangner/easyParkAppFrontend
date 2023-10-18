@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, StatusBar, Animated  } from 'react-native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MaterialCommunityIcons } from 'react-native-vector-icons';
 
 import { 
     Container, 
@@ -26,7 +27,7 @@ import Card from '../../components/Card';
 import InputCard from '../../components/InputCard';
 import CustomButton from '../../components/Button';
 import Api from '../../Api.js';
-import CreditCard from 'react-native-credit-card';
+import { getBrand } from '../../components/InputCard/brand';
 
 import Carousel from 'react-native-snap-carousel';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -37,6 +38,22 @@ export default () => {
     const [userPlates, setUserPlates] = useState([]);
     const [token, setToken] = useState(null);
     const [isModalCardVisible, setModalCardVisible] = useState(false);
+    const [card, setCard] = useState({
+        name: '',
+        number: '',
+        validate: '',
+        cvv: ''
+    });
+    // const [flag, setFlag] = useState({
+    //     flag: false
+    // })
+    const [widthAnimated, setWidthAnimated] = useState(new Animated.Value(310));
+    const [backView, setBackView] = useState(false);
+    const [nameCreditCardField, setNameCreditCardField] = useState('');
+    const [numberCreditCardField, setNumberCreditCardField] = useState('');
+    const [validateCreditCardField, setValidateCreditCardField] = useState('');
+    const [cvvCreditCardField, setCvvCreditCardField] = useState('');
+    const [creditCards, setCreditCards] = useState([]);
 
     const carIcon = { type: 'FontAwesome', name: 'car' };
 
@@ -74,7 +91,6 @@ export default () => {
                 const decodedToken = jwtDecode(storedToken);
                 const userId = decodedToken.id;
                 setToken(storedToken);
-                console.log('User ID:', userId);
                 return userId;
             } else {
                 console.log('Token not found in AsyncStorage');
@@ -125,6 +141,56 @@ export default () => {
         </View>
     );
 
+    const animatedCard = (back) => {
+        if(back && !backView){
+            Animated.timing(widthAnimated, {
+                toValue: 0,
+                duration: 400,
+                useNativeDriver: false
+            }).start()
+            
+            setTimeout(() => {
+                Animated.timing(widthAnimated, {
+                    toValue: 310,
+                    duration: 400,
+                    useNativeDriver: false
+                }).start()
+                setBackView(true)
+            }, 400)
+        } else if(!back && backView){
+            Animated.timing(widthAnimated, {
+                toValue: 0,
+                duration: 400,
+                useNativeDriver: false
+            }).start()
+            
+            setTimeout(() => {
+                Animated.timing(widthAnimated, {
+                    toValue: 310,
+                    duration: 400,
+                    useNativeDriver: false
+                }).start()
+                setBackView(false)
+            }, 400)
+        }
+    }
+
+    const HandleAddCreditCard = async () => {
+
+        const userID = await getTokenFromStorage();
+
+        if (nameCreditCardField !== '' && numberCreditCardField !== '' && validateCreditCardField !== '' && cvvCreditCardField !== '' && userID) {
+            try {
+                let res = await Api.addCreditCard(nameCreditCardField, numberCreditCardField, validateCreditCardField, cvvCreditCardField, userID, token);
+                console.log(res)
+                alert('Cartão cadastrado com sucesso!');
+                setModalCardVisible(false);
+            } catch (error) {
+                console.error('Error adding credit card:', error);
+            }
+        }
+    }; 
+
     return (
         <Container>
             <SquareBlue />
@@ -142,7 +208,8 @@ export default () => {
             <CustomTextContainer marginTop="3%">
                 <CustomText fontSize="22px" color="#ffffff">R$ 0,00</CustomText>
             </CustomTextContainer>
-            <Modal isVisible={isModalPlateVisible} style={{ justifyContent: 'center', alignItems: 'center', height: 10 }}>
+            <Modal isVisible={isModalPlateVisible} style={{ justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                <StatusBar translucent backgroundColor="rgba(0, 0, 0, 0.7)" barStyle="white" />
                 <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff', width: 300, height: 300, borderRadius: 20 }}>
                     <TouchableOpacity style={{ position: 'absolute', top: -20, right: -20, zIndex: 1 }} onPress={closeModalPlate}>
                         <View style={{ width: 40, height: 40, backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
@@ -153,7 +220,7 @@ export default () => {
                         <InputArea>
                             <Input
                                 placeholder="Digite a Placa"
-                                icon={carIcon}
+                                flag={carIcon}
                                 value={plateField}
                                 onChangeText={setPlateField}
                                 password={false}
@@ -189,29 +256,83 @@ export default () => {
                     style={{ ...styles.linearGradient, height: 230, position: 'absolute', top: 140, left: 0, right: 0 }}
                 >
                     <Text onPress={openModalCard}>teste</Text>
+                    {creditCards.map((card, index) => (
+                    <View key={index}>
+                        <Text>{card.name}</Text>
+                        <Text>{card.number}</Text>
+                        <Text>{card.date}</Text>
+                        <Text>{card.cvv}</Text>
+                    </View>
+                    ))}
                 </LinearGradient>
             </View>
-            <Modal isVisible={isModalCardVisible}>
-                <View
-                    style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: '#ffffff',
-                    width: 350,
-                    height: 500,
-                    borderRadius: 20,
-                    }}>
+            <Modal isVisible={isModalCardVisible} style={{position: "absolute"}}>
+                <StatusBar translucent backgroundColor="rgba(0, 0, 0, 0.7)" barStyle="white" />
+                <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff',
+                    width: 350, height: 500, borderRadius: 20,}}>
                     <TouchableOpacity style={{ position: 'absolute', top: -20, right: -20, zIndex: 1 }} onPress={closeModalCard}>
-                    <View style={{ width: 40, height: 40, backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
-                        <Icon name="times" size={20} color="white" />
-                    </View>
+                        <View style={{ width: 40, height: 40, backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                            <Icon name="times" size={20} color="white" />
+                        </View>
                     </TouchableOpacity>
-                    <Card />
-                    <InputCard />
-                    <InputCard />
-                    <View style={{ flexDirection: 'row' }}>
-                    <InputCard width="45%" />
-                    <InputCard width="45%" />
+                    <Animated.View style={{width: widthAnimated}}>
+                        <Card card={card} back={backView} /*flag={flag}*//>
+                    </Animated.View>
+                    <InputCard 
+                        placeholder="Nome do Titular"
+                        flag={<MaterialCommunityIcons name="account-outline" size={20} color="#6B92A4" style={{ marginRight: 10 }} />}
+                        value={card.name}
+                        onChangeText={(text) => {
+                            setCard({ ...card, name: text })
+                            setNameCreditCardField(text)
+                        }}
+                    />
+                    <InputCard
+                        placeholder="Número do Cartão"
+                        flag={<MaterialCommunityIcons name="numeric" size={20} color="#6B92A4" style={{ marginRight: 10 }} />}
+                        value={card.number}
+                        onChangeText={(text) => {
+                            setCard({ ...card, number: text })
+                            // setFlag(getBrand(text))
+                            animatedCard(false)
+                            setNumberCreditCardField(text)
+                        }}
+                        type="credit-card"
+                        mask
+                    />
+                    <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                        <InputCard 
+                            width="43%" 
+                            placeholder="Validade"
+                            flag={<MaterialCommunityIcons name="calendar-month-outline" size={20} color="#6B92A4" style={{ marginRight: 10 }} />}
+                            value={card.validate}
+                            onChangeText={(text) => {
+                                setCard({ ...card, validate: text })
+                                animatedCard(false)
+                                setValidateCreditCardField(text)                            }}
+                            type="custom"
+                            options={{
+                                mask: '99/99'
+                            }}
+                            mask
+                        />
+                        <View width="4%" />
+                        <InputCard 
+                            width="43%" 
+                            placeholder="CVV"
+                            flag={<MaterialCommunityIcons name="lock-outline" size={20} color="#6B92A4" style={{ marginRight: 10 }} />}
+                            value={card.cvv}
+                            onChangeText={(text) => {
+                                setCard({ ...card, cvv: text })
+                                animatedCard(true)
+                                setCvvCreditCardField(text)
+                            }}
+                            type="custom"
+                            options={{
+                                mask: '999'
+                            }}
+                            mask
+                        />
                     </View>
                     <CustomButton
                         color="#1AD61A"
@@ -221,11 +342,11 @@ export default () => {
                         textColor="#ffffff"
                         text="Cadastrar"
                         borderRadius="50px"
-                        marginTop="4%"
+                        marginTop="15px"
+                        onPress={HandleAddCreditCard}
                     />
                 </View>
             </Modal>
-
             <CustomButton
                 color="#1AD61A"
                 width="200px"
@@ -234,7 +355,7 @@ export default () => {
                 textColor="#ffffff"
                 text="Finalizar"
                 borderRadius="50px"
-                marginBottom="6"
+                marginBottom="20px"
             />
         </Container>
     )

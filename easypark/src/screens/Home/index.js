@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, ImageEllipsis, SquareBlue, CustomTextTime, CustomTextTimeContainer, AddPlateContainer, AddPlateText, ImageCar, InputArea } from './styles';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, StatusBar } from 'react-native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -50,7 +50,6 @@ export default () => {
                 const decodedToken = jwtDecode(storedToken);
                 const userId = decodedToken.id;
                 setToken(storedToken);
-                console.log('User ID:', userId);
                 return userId;
             } else {
                 console.log('Token not found in AsyncStorage');
@@ -115,6 +114,7 @@ export default () => {
                 <CustomTextTime fontSize="34px">00:00</CustomTextTime>
             </CustomTextTimeContainer>
             <Modal isVisible={isModalVisible} style={{ justifyContent: 'center', alignItems: 'center', height: 10 }}>
+                <StatusBar translucent backgroundColor="rgba(0, 0, 0, 0.7)" barStyle="white" />
                 <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff', width: 300, height: 300, borderRadius: 20 }}>
                     <TouchableOpacity style={{ position: 'absolute', top: -20, right: -20, zIndex: 1 }} onPress={closeModal}>
                         <View style={{ width: 40, height: 40, backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
