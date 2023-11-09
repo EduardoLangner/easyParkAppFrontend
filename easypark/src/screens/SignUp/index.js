@@ -3,6 +3,7 @@
     import { useNavigation } from '@react-navigation/native'
     import { Container, ImageBackGround, ImageLogo, SignUpText, InputArea, ImageEllipsis, SignUpButtonSignIn, SignUpButtonSignInText, InputContainer  } from './styles'
     import AsyncStorage from '@react-native-async-storage/async-storage';
+    import jwtDecode from 'jwt-decode';
 
     import ImageBG from '../../assets/SignUpLong.png'
     import Logo from '../../assets/LogoWhite.png'
@@ -28,7 +29,7 @@
         const [emailField, setEmailField] = useState('')
         const [passwordField, setPasswordField] = useState('')
         const [confirmPasswordField, setConfirmPasswordField] = useState('')
-
+        const [token, setToken] = useState(null);
         const handleSignUpButtonSignInClick = () => {
             navigation.reset({
                 routes: [{name: 'SignIn'}]
@@ -36,20 +37,50 @@
         }
 
         const handleSignUpClick = async () => {
-            if(nameField != '' && cpfField != '' && emailField != '' && passwordField != '') {
-                let res = await Api.signUp(nameField, cpfField, emailField, passwordField)
-                if(res.token) {
-                    await AsyncStorage.setItem('token', res.token)
-                    navigation.reset({
-                        routes: [{name: 'Home'}]
-                    })
-                }else{
-                    alert("Error: " + res.error)
+            if (nameField !== '' && cpfField !== '' && emailField !== '' && passwordField !== '') {
+                let res = await Api.signUp(nameField, cpfField, emailField, passwordField);
+                if (res.token) {   
+                    await AsyncStorage.setItem('token', res.token);
+                    try {
+                        const userID = await getTokenFromStorage();
+                        if (userID) {
+                            const user = await Api.getUserByID(userID, token);
+                            if (user) {
+                                const { name, cpf } = user;
+                                const customer = await Api.createCustomer(name, cpf, token);
+                                let asass_id = customer.id;
+                                if(asass_id) {
+                                    let user = await Api.updateUserByID(userID, asass_id, token);
+                                    navigation.reset({
+                                        routes: [{ name: 'Home' }]
+                                    });
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Erro ao criar o cliente no Asaas:', error);
+                    }
                 }
-            }else{
-                alert("Preencha todos os campos!")
+            } else {
+                alert("Preencha todos os campos!");
             }
         }
+
+        const getTokenFromStorage = async () => {
+            try {
+                const storedToken = await AsyncStorage.getItem('token');
+                if (storedToken !== null) {
+                    const decodedToken = jwtDecode(storedToken);
+                    const userId = decodedToken.id;
+                    setToken(storedToken);
+                    return userId;
+                } else {
+                    console.log('Token not found in AsyncStorage');
+                }
+            } catch (error) {
+                console.error('Error getting token from AsyncStorage:', error);
+            }
+        };
 
         return (
             <Container>

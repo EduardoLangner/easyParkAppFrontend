@@ -16,12 +16,14 @@ import {
     ImageCar, 
     InputArea, 
     InformationTexT, 
+    Chip
 } from './styles';
 
 import jwtDecode from 'jwt-decode';
 
 import EllipsisBlue from '../../assets/EllipsisBlue.png';
 import Car from '../../assets/Car.png';
+import ChipImage from '../../assets/Chip.png';
 import Input from '../../components/Input';
 import Card from '../../components/Card';
 import InputCard from '../../components/InputCard';
@@ -53,7 +55,8 @@ export default () => {
     const [numberCreditCardField, setNumberCreditCardField] = useState('');
     const [validateCreditCardField, setValidateCreditCardField] = useState('');
     const [cvvCreditCardField, setCvvCreditCardField] = useState('');
-    const [creditCards, setCreditCards] = useState([]);
+    const [creditCardNumber, setCreditCardNumber] = useState('');
+    const [nameCreditCard, setNameCreditCard] = useState('');
 
     const carIcon = { type: 'FontAwesome', name: 'car' };
 
@@ -106,7 +109,6 @@ export default () => {
         if (plateField !== '' && userID) {
             try {
                 let res = await Api.addPlate(plateField, userID, token); 
-                console.log('Response from addPlate:', res);
                 setUserPlates(prevPlates => {
                     if (!Array.isArray(prevPlates)) {
                         return [{ plate: plateField }];
@@ -175,20 +177,51 @@ export default () => {
         }
     }
 
-    const HandleAddCreditCard = async () => {
-
+    const HandleAddCreditCardAsaas = async () => {  
+        
         const userID = await getTokenFromStorage();
 
-        if (nameCreditCardField !== '' && numberCreditCardField !== '' && validateCreditCardField !== '' && cvvCreditCardField !== '' && userID) {
-            try {
-                let res = await Api.addCreditCard(nameCreditCardField, numberCreditCardField, validateCreditCardField, cvvCreditCardField, userID, token);
-                console.log(res)
-                alert('Cartão cadastrado com sucesso!');
-                setModalCardVisible(false);
-            } catch (error) {
-                console.error('Error adding credit card:', error);
-            }
-        }
+        let customerId = await Api.getUserByID(userID, token);
+        let customer = customerId.asaas_id
+        let billingType = "CREDIT_CARD"
+        let date = new Date();
+        let day = date.getDate();
+        let month = date.getMonth() + 1
+        let year = date.getFullYear().toString()
+        let dueDate = `${year}-${month}-${day}`
+        let value = 5 //valor padrão apenas para cadastrar o cartão
+        let holderName = nameCreditCardField
+        let number = numberCreditCardField.replace(/\s/g, ''); //removo os espaços em branco do cartão
+        let expiryMonth = validateCreditCardField.slice(0, 2)
+        let expiryYear = validateCreditCardField.slice(3, 5)
+        expiryYear = '20' + expiryYear; // adiciono o 20 na frente do ano para ficar com 4 digitos 
+        let ccv = cvvCreditCardField
+        /* 
+        Dados padrões para teste
+        "name": "Eduardo S Langner"
+        "number": "5162 9226 2066 3847",
+        "expiryMonth": "11",
+        "expiryYear": "31",
+        "ccv": "307"
+        */
+        let name = "Marcelo Henrique Almeida"
+        let email = "marcelo.almeida@gmail.com" 
+        let cpfCnpj = "24971563792"
+        let postalCode = "89223-005"
+        let addressNumber = "277"
+        let phone = "4738010919"
+        let authorizeOnly = true
+        
+        let creditCard = await Api.createCreditCard(customer, billingType, dueDate, value, holderName, number, expiryMonth, expiryYear, ccv, name, email, cpfCnpj, postalCode, addressNumber, phone, authorizeOnly, token)
+
+        let idCartaoAsaas = creditCard.id
+
+        let numberCreditCard = creditCard.creditCard.creditCardNumber;
+
+        let res = await Api.addCreditCard(idCartaoAsaas, numberCreditCard, holderName, userID, token)
+
+        setModalCardVisible(false);
+        alert('Cartão cadastrado com sucesso!');
     }; 
 
     return (
@@ -255,15 +288,14 @@ export default () => {
                     colors={['rgba(103,150,171,0.6)','rgba(1,32,47,0.8)']} 
                     style={{ ...styles.linearGradient, height: 230, position: 'absolute', top: 140, left: 0, right: 0 }}
                 >
-                    <Text onPress={openModalCard}>teste</Text>
-                    {creditCards.map((card, index) => (
-                    <View key={index}>
-                        <Text>{card.name}</Text>
-                        <Text>{card.number}</Text>
-                        <Text>{card.date}</Text>
-                        <Text>{card.cvv}</Text>
+                    <View>
+                        <Text onPress={openModalCard} placeholder="Nome do Titular">{nameCreditCard}</Text>
+                        <Text onPress={openModalCard}>#### #### #### {creditCardNumber}</Text>
+                        <Text onPress={openModalCard}>####</Text>
+                        <Text onPress={openModalCard}>###</Text>
+                        <Chip source={ChipImage} onPress={openModalCard}></Chip>
                     </View>
-                    ))}
+                                        
                 </LinearGradient>
             </View>
             <Modal isVisible={isModalCardVisible} style={{position: "absolute"}}>
@@ -343,7 +375,7 @@ export default () => {
                         text="Cadastrar"
                         borderRadius="50px"
                         marginTop="15px"
-                        onPress={HandleAddCreditCard}
+                        onPress={HandleAddCreditCardAsaas}
                     />
                 </View>
             </Modal>

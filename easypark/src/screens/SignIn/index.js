@@ -36,7 +36,6 @@ export default() => {
             
             if(res.token) {
                 await AsyncStorage.setItem('token', res.token)
-                console.log(res.token)
                 navigation.reset({
                     routes: [{name: 'MainTab'}]
                 })

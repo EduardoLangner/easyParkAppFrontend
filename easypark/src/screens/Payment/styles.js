@@ -67,3 +67,6 @@ export const InformationTexT = styled.Text`
     text-align: center;
     margin-top: 10%;
 `
+
+export const Chip = styled.Image`
+`

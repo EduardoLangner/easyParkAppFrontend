@@ -65,7 +65,6 @@ export default () => {
         if (plateField !== '' && userID) {
             try {
                 let res = await Api.addPlate(plateField, userID, token); 
-                console.log('Response from addPlate:', res);
                 setUserPlates(prevPlates => {
                     if (!Array.isArray(prevPlates)) {
                         return [{ plate: plateField }];

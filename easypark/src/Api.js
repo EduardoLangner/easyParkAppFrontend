@@ -1,4 +1,5 @@
-const BASE_API = 'http://192.168.46.247:3000'
+const BASE_API = 'http://192.168.0.103:3000'
+const BASE_ASAAS = 'https://sandbox.asaas.com/api/v3'
 
 export default {
 
@@ -7,7 +8,7 @@ export default {
     //         method: 'POST',
     //         headers: {
     //             Accept: 'application/json',
-    //             'Content-Type': 'application/json',
+    //             'Content-Type': 'application/json',k
     //             authorization: `Bearer ${token}`
     //         }
     //     })
@@ -28,14 +29,41 @@ export default {
         return json
     },
 
-    signUp: async (name, email, cpf, password) => {
+    signUp: async (name, cpf, email, password) => {
         const req = await fetch(`${BASE_API}/signup`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({name, email, cpf, password})
+            body: JSON.stringify({name, cpf, email, password})
+        })
+        const json = await req.json()
+        return json
+    },
+
+    getUserByID: async (userID, token) => {
+        const req = await fetch(`${BASE_API}/users/${userID}`, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${token}` 
+            }
+        })
+        const json = await req.json()
+        return json
+    },
+
+    updateUserByID: async (userId, asaas_id, token) => {
+        const req = await fetch(`${BASE_API}/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${token}` 
+            },
+            body: JSON.stringify({ asaas_id })
         })
         const json = await req.json()
         return json
@@ -68,7 +96,66 @@ export default {
         return json;
     },
 
-    addCreditCard: async (name, number, date, cvv, userID, token) => {
+    createCustomer: async (userName, userCPF, token) => {
+        const requestBody = { name: userName, cpfCnpj: userCPF }
+        
+        const req = await fetch(`${BASE_ASAAS}/customers`, {
+            method: 'POST',
+            headers: {
+                accept: 'application/json',
+                'content-Type': 'application/json',
+                'access_token': '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwNjgyNjc6OiRhYWNoXzcwNzRkMjgxLTUwMDEtNGRhOS1iYzNhLWI4ZmY4YmFmOWZlNQ==',
+                authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(requestBody), 
+        });
+    
+        const json = await req.json();
+        return json;
+    },
+
+    createCreditCard: async (customer, billingType, dueDate, value, holderName, number, expiryMonth, expiryYear, ccv, name, email, cpfCnpj, postalCode, addressNumber, phone, authorizeOnly, token) => {
+
+        const requestBody = {
+            customer,
+            billingType,
+            dueDate,
+            value,
+            creditCard: {
+                holderName,
+                number,
+                expiryMonth,
+                expiryYear,
+                ccv
+            },
+            creditCardHolderInfo: {
+                name,
+                email,
+                cpfCnpj,
+                postalCode,
+                addressNumber,
+                phone,
+            },
+            authorizeOnly
+        };
+    
+        const req = await fetch(`${BASE_ASAAS}/payments`, {
+            method: 'POST',
+            headers: {
+                accept: 'application/json',
+                'content-Type': 'application/json',
+                'access_token': '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDAwNjgyNjc6OiRhYWNoXzcwNzRkMjgxLTUwMDEtNGRhOS1iYzNhLWI4ZmY4YmFmOWZlNQ==',
+                authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(requestBody),
+        });
+    
+        const json = await req.json();
+        return json;
+    },
+
+    addCreditCard: async (idCartaoAsaas, numberCreditCard, holderName, userID, token) => {
+        
         const req = await fetch(`${BASE_API}/creditcard`, {
             method: 'POST',
             headers: {
@@ -76,23 +163,9 @@ export default {
                 'Content-Type': 'application/json',
                 authorization: `Bearer ${token}` 
             },
-            body: JSON.stringify({ name, number, date, cvv, user_id: userID }),
+            body: JSON.stringify({ asaas_creditcard_id: idCartaoAsaas, credit_card_number: numberCreditCard, credit_card_name: holderName, user_id: userID }),
         });
         const json = await req.json();
         return json;
     },
-
-    getCreditCard: async (userID, token) => {
-        const req = await fetch(`${BASE_API}/creditcardbyuser/${userID}`, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                authorization: `Bearer ${token}` 
-            }
-        });
-        const json = await req.json();
-        return json;
-    },
-    
 }
