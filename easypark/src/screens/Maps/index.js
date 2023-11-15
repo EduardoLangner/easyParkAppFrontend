@@ -20,6 +20,7 @@ export default () => {
     const [plateField, setPlateField] = useState('');
     const [userPlates, setUserPlates] = useState([]);
     const [token, setToken] = useState(null);
+    const [accountBalance, setAccountBalance] = useState(0);
 
     const carIcon = { type: 'FontAwesome', name: 'car' };
 
@@ -81,6 +82,22 @@ export default () => {
         }
     };  
 
+    const HandleGetAccountBalance = async () => {
+        const userID = await getTokenFromStorage();
+        let res = await Api.getUserByID(userID, token);
+        
+        const formattedBalance = parseFloat(res.account_balance).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+    
+        setAccountBalance(formattedBalance);
+    };
+
+    useEffect(() => {
+        HandleGetAccountBalance();
+    }, [token]);
+
     return (
         <Container>
             <SquareBlue />
@@ -97,7 +114,7 @@ export default () => {
             </AddPlateContainer>
             <CustomTextTimeContainer marginTop="7%">
                 <CustomTextTime fontSize="23px" color="#ffffff">Saldo disponível</CustomTextTime>
-                <CustomTextTime fontSize="28px" color="#ffffff">R$ 0,00</CustomTextTime>
+                <CustomTextTime fontSize="28px" color="#ffffff">R$ {accountBalance}</CustomTextTime>
             </CustomTextTimeContainer>
             <Modal isVisible={isModalVisible} style={{ justifyContent: 'center', alignItems: 'center', height: 10 }}>
                 <StatusBar translucent backgroundColor="rgba(0, 0, 0, 0.7)" barStyle="white" />

@@ -57,6 +57,10 @@ export default () => {
     const [cvvCreditCardField, setCvvCreditCardField] = useState('');
     const [creditCardNumber, setCreditCardNumber] = useState('');
     const [nameCreditCard, setNameCreditCard] = useState('');
+    const [selectedItemIndex, setSelectedItemIndex] = useState(3); 
+    const [selectedValue, setSelectedValue] = useState(0);
+    const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
+    const [accountBalance, setAccountBalance] = useState(0);
 
     const carIcon = { type: 'FontAwesome', name: 'car' };
 
@@ -214,15 +218,90 @@ export default () => {
         
         let creditCard = await Api.createCreditCard(customer, billingType, dueDate, value, holderName, number, expiryMonth, expiryYear, ccv, name, email, cpfCnpj, postalCode, addressNumber, phone, authorizeOnly, token)
 
-        let idCartaoAsaas = creditCard.id
+        let idCartaoAsaas = creditCard.id;
 
         let numberCreditCard = creditCard.creditCard.creditCardNumber;
 
-        let res = await Api.addCreditCard(idCartaoAsaas, numberCreditCard, holderName, userID, token)
+        let tokenCreditCard = creditCard.creditCard.creditCardToken;
+
+        await Api.addCreditCard(idCartaoAsaas, numberCreditCard, holderName, tokenCreditCard, userID, token)
 
         setModalCardVisible(false);
         alert('Cartão cadastrado com sucesso!');
     }; 
+
+    const HandleGetCreditCard = async () => {
+        const userID = await getTokenFromStorage();
+        let res = await Api.getCreditCardByUserId(userID, token);
+    
+        if (res && res.length > 0) {
+            const firstCreditCard = res[0];
+            setCreditCardNumber(firstCreditCard.credit_card_number);
+            setNameCreditCard(firstCreditCard.credit_card_name);
+
+            console.log('Credit Card Number:', creditCardNumber);
+            console.log('Name Credit Card:', nameCreditCard);
+        }
+    };
+
+    useEffect(() => {
+        HandleGetCreditCard();
+    }, [token]);
+
+    const handleReload = async () => {
+    
+        const userID = await getTokenFromStorage();
+        let creditCard = await Api.getCreditCardByUserId(userID, token);
+        let user = await Api.getUserByID(userID, token);
+    
+        let customer = user.asaas_id;
+        let billingType = "CREDIT_CARD";
+        let value = parseFloat(data[selectedItemIndex].text.replace('R$ ', '').replace(',', '.'));
+        let currentDate = new Date();
+        let year = currentDate.getFullYear();
+        let month = String(currentDate.getMonth() + 1).padStart(2, "0");
+        let day = String(currentDate.getDate()).padStart(2, "0");
+        let dueDate = `${year}-${month}-${day}`; 
+        let creditCardToken = creditCard[0].credit_card_token;     
+    
+        let res = await Api.createPayment(customer, billingType, value, dueDate, creditCardToken, token);
+        
+        let response = res.status
+        let account_balance = res.value
+
+        if(response == "CONFIRMED"){
+            await Api.updateAccountBalanceUserByID(userID, account_balance, token);
+            setPaymentModalVisible(false);
+        }else{
+            alert("Erro ao realizar o pagamento")
+        }
+    };
+
+    const handlePaymentClick = async () => {
+        
+        const selectedAmount = parseFloat(data[selectedItemIndex].text.replace('R$ ', '').replace(',', '.'));
+
+        setSelectedValue(selectedAmount);
+
+        setPaymentModalVisible(true);
+      
+    }
+
+    const HandleGetAccountBalance = async () => {
+        const userID = await getTokenFromStorage();
+        let res = await Api.getUserByID(userID, token);
+        
+        const formattedBalance = parseFloat(res.account_balance).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+    
+        setAccountBalance(formattedBalance);
+    };
+
+    useEffect(() => {
+        HandleGetAccountBalance();
+    }, [token]);
 
     return (
         <Container>
@@ -239,7 +318,7 @@ export default () => {
                 </TouchableOpacity>
             </AddPlateContainer>
             <CustomTextContainer marginTop="3%">
-                <CustomText fontSize="22px" color="#ffffff">R$ 0,00</CustomText>
+                <CustomText fontSize="28px" color="#ffffff">R$ {accountBalance}</CustomText>
             </CustomTextContainer>
             <Modal isVisible={isModalPlateVisible} style={{ justifyContent: 'center', alignItems: 'center', height: 300 }}>
                 <StatusBar translucent backgroundColor="rgba(0, 0, 0, 0.7)" barStyle="white" />
@@ -281,22 +360,33 @@ export default () => {
                     renderItem={renderItem}
                     sliderWidth={380}
                     itemWidth={120}
-                    initialScrollIndex={3}
+                    initialScrollIndex={2}
+                    onSnapToItem={(index) => setSelectedItemIndex(index)}
                 />
                
-                <LinearGradient
+               <LinearGradient
                     colors={['rgba(103,150,171,0.6)','rgba(1,32,47,0.8)']} 
                     style={{ ...styles.linearGradient, height: 230, position: 'absolute', top: 140, left: 0, right: 0 }}
                 >
                     <View>
-                        <Text onPress={openModalCard} placeholder="Nome do Titular">{nameCreditCard}</Text>
-                        <Text onPress={openModalCard}>#### #### #### {creditCardNumber}</Text>
-                        <Text onPress={openModalCard}>####</Text>
-                        <Text onPress={openModalCard}>###</Text>
-                        <Chip source={ChipImage} onPress={openModalCard}></Chip>
+                        <View style={{paddingTop: 20,  marginLeft: 30}}>
+                            <Text onPress={openModalCard} style={{ color: 'white', fontSize: 20 }}>
+                                {nameCreditCard || 'Titular do cartão'}
+                            </Text>
+                        </View>
+                        <View  style={{flexDirection: 'row', alignItems: 'center', paddingTop: 35}}>
+                            <Chip source={ChipImage} onPress={openModalCard} style={{ marginLeft: 30 }}></Chip>
+                            <Text onPress={openModalCard} style={{ color: 'white', fontSize: 20, marginLeft:25}}>
+                                {creditCardNumber ? `#### #### #### ${creditCardNumber}` : '#### #### #### ####'}
+                            </Text>
+                        </View>
+                        <View style={{flexDirection: 'row', alignItems: 'center', paddingTop: 40, justifyContent: 'center'}}>
+                            <Text onPress={openModalCard} style={{ color: 'white', fontSize: 20, marginRight: 220 }}>##/##</Text>
+                            <Text onPress={openModalCard} style={{ color: 'white', fontSize: 20, marginLeft: -10 }}>###</Text>
+                        </View>
                     </View>
-                                        
                 </LinearGradient>
+                
             </View>
             <Modal isVisible={isModalCardVisible} style={{position: "absolute"}}>
                 <StatusBar translucent backgroundColor="rgba(0, 0, 0, 0.7)" barStyle="white" />
@@ -388,7 +478,34 @@ export default () => {
                 text="Finalizar"
                 borderRadius="50px"
                 marginBottom="20px"
+                onPress={handlePaymentClick}
             />
+            <Modal isVisible={isPaymentModalVisible} style={{ justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                <StatusBar translucent backgroundColor="rgba(0, 0, 0, 0.7)" barStyle="white" />
+                <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff', width: 300, height: 300, borderRadius: 20 }}>
+                    <TouchableOpacity style={{ position: 'absolute', top: -20, right: -20, zIndex: 1 }} onPress={() => setPaymentModalVisible(false)}>
+                        <View style={{ width: 40, height: 40, backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                            <Icon name="times" size={20} color="white" />
+                        </View>
+                    </TouchableOpacity>
+                    <View style={{ padding: 20 }}>
+                        <InputArea>
+                            <Text style={{ fontSize: 25, marginVertical: 20, justifyContent: "center", alignItems: "center", textAlign: "center" }}>Deseja recarregar o valor de R$ {selectedValue.toFixed(2)}?</Text>
+                            <CustomButton
+                                color="#1AD61A"
+                                width="200px"
+                                height="30%"
+                                fontSize="25px" 
+                                textColor="#ffffff"
+                                text="Recarregar"
+                                borderRadius="50px"
+                                marginTop="15%"
+                                onPress={handleReload}
+                            />
+                        </InputArea>
+                    </View>
+                </View>
+            </Modal>
         </Container>
     )
 }

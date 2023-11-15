@@ -69,4 +69,7 @@ export const InformationTexT = styled.Text`
 `
 
 export const Chip = styled.Image`
+    width: 20%;    
+    height: 55px;
+    margin-left: 5%;
 `

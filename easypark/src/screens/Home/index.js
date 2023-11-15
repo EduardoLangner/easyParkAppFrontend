@@ -19,6 +19,8 @@ export default () => {
     const [plateField, setPlateField] = useState('');
     const [userPlates, setUserPlates] = useState([]);
     const [token, setToken] = useState(null);
+    const [accountBalance, setAccountBalance] = useState(0);
+    const [convertedTime, setConvertedTime] = useState('00:00');
 
     const carIcon = { type: 'FontAwesome', name: 'car' };
 
@@ -79,6 +81,52 @@ export default () => {
         }
     };  
 
+    const HandleGetAccountBalance = async () => {
+        const userID = await getTokenFromStorage();
+        let res = await Api.getUserByID(userID, token);
+        
+        const formattedBalance = parseFloat(res.account_balance).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+    
+        setAccountBalance(formattedBalance);
+    };
+
+    useEffect(() => {
+        HandleGetAccountBalance();
+    }, [token]);
+
+    const convertBalanceToTime = (balance) => {
+    
+        // Remove as vírgulas e converte para número
+        const numericBalance = parseFloat(balance.toString().replace(',', '.'));
+    
+        // A taxa de câmbio entre reais e segundos é 1/1440
+        const exchangeRate = 1 / 1440;
+    
+        // Calcula os segundos com base no valor exato em reais
+        const exactSeconds = numericBalance / exchangeRate;
+    
+        // Converte os segundos em horas, minutos e segundos
+        const hours = Math.floor(exactSeconds / 3600);
+        const minutes = Math.floor((exactSeconds % 3600) / 60);
+        const remainingSeconds = Math.floor(exactSeconds % 60);
+    
+        // Formata o resultado como 'HH:mm:ss'
+        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    
+        // Atualiza o estado com o tempo convertido
+        setConvertedTime(formattedTime);
+    };
+    
+    useEffect(() => {
+        // Quando o saldo da conta é atualizado, converte e atualiza o estado
+        if (accountBalance !== null && accountBalance !== undefined) {
+          convertBalanceToTime(parseFloat(accountBalance.toString().replace(',', '.')));
+        }
+    }, [parseFloat(accountBalance.toString().replace(',', '.'))]);
+    
 
     return (
         <Container>
@@ -96,7 +144,7 @@ export default () => {
             </AddPlateContainer>
             <CustomTextTimeContainer marginTop="7%">
                 <CustomTextTime fontSize="23px" color="#ffffff">Saldo disponível</CustomTextTime>
-                <CustomTextTime fontSize="28px" color="#ffffff">R$ 0,00</CustomTextTime>
+                <CustomTextTime fontSize="28px" color="#ffffff">R$ {accountBalance}</CustomTextTime>
             </CustomTextTimeContainer>
             <CustomButton
                 color="#1AD61A"
@@ -110,7 +158,7 @@ export default () => {
             />
             <CustomTextTimeContainer>
                 <CustomTextTime>Tempo:</CustomTextTime>
-                <CustomTextTime fontSize="34px">00:00</CustomTextTime>
+                <CustomTextTime fontSize="34px">{convertedTime}</CustomTextTime>
             </CustomTextTimeContainer>
             <Modal isVisible={isModalVisible} style={{ justifyContent: 'center', alignItems: 'center', height: 10 }}>
                 <StatusBar translucent backgroundColor="rgba(0, 0, 0, 0.7)" barStyle="white" />

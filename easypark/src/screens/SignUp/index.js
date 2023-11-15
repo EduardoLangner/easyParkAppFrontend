@@ -39,15 +39,19 @@
         const handleSignUpClick = async () => {
             if (nameField !== '' && cpfField !== '' && emailField !== '' && passwordField !== '') {
                 let res = await Api.signUp(nameField, cpfField, emailField, passwordField);
+                console.log(res)
                 if (res.token) {   
                     await AsyncStorage.setItem('token', res.token);
                     try {
                         const userID = await getTokenFromStorage();
+                        console.log(userID)
                         if (userID) {
                             const user = await Api.getUserByID(userID, token);
+                            console.log(user)
                             if (user) {
                                 const { name, cpf } = user;
                                 const customer = await Api.createCustomer(name, cpf, token);
+                                console.log(customer)
                                 let asass_id = customer.id;
                                 if(asass_id) {
                                     let user = await Api.updateUserByID(userID, asass_id, token);
