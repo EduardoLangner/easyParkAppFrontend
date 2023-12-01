@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 export const Container = styled.SafeAreaView`
     background-color: #ffffff;
     flex: 1;
-    justify-content: flex-start; /* Alterado para alinhar no topo */
+    justify-content: flex-start;
     align-items: center;
 `
 
@@ -13,7 +13,7 @@ export const SquareBlue = styled.View`
     height: 150px;
     background-color: #6B92A4;
     top: 0;
-    z-index: 2;
+    z-index: 1;
 `
 
 export const ImageEllipsis = styled.Image`
@@ -23,37 +23,31 @@ export const ImageEllipsis = styled.Image`
     z-index: 1;
 `
 
-export const CustomTextTimeContainer = styled.View`
-    margin-top: ${props => props.marginTop || '25%'};
-    align-items: center;
-    justify-content: center;
+export const ModalContent = styled.View`
+    flex: 1;
+    position: absolute; /* Adicione esta linha para sobrepor outros elementos */
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: row;
     z-index: 3;
 `
 
-export const CustomTextTime = styled.Text`
-    font-size: ${props => props.fontSize || '30px'};
-    color: ${props => props.color || '#000000'};
+export const ModalBlue = styled.View`
+    flex: 3; /* Ajuste conforme necessário */
+    height: 100%;
+    background-color: #6B92A4;
 `
 
-export const AddPlateContainer = styled.View`
+export const ModalBlack = styled.View`
+    flex: 1; /* Ajuste conforme necessário */
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);   
+`
+
+export const TextContainer = styled.View`
     align-items: center;
+    margin-top: 10%;
     flex-direction: row;
-    z-index: 2;
-    margin-top: -45%;
-`
-
-export const AddPlateText = styled.Text`
-    font-size: 25px;
-    color: #ffffff;
-`
-
-export const ImageCar = styled.Image`
-    width: 30%;    
-    height: 50px;
-`
-
-export const InputArea = styled.View`
-    width: 100%;
-    align-items: center;
-    justify-content: center;
 `

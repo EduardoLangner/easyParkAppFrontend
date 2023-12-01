@@ -1,4 +1,6 @@
-const BASE_API = 'http://192.168.0.19:3000'
+const BASE_API = 'http://192.168.60.169:3000' //Unochapecó
+// const BASE_API = 'http://192.168.0.46:3000' //Brasitalia
+// const BASE_API = 'http://192.168.0.103:3000' //Cosmos
 const BASE_ASAAS = 'https://sandbox.asaas.com/api/v3'
 
 export default {
@@ -222,4 +224,31 @@ export default {
         const json = await req.json()
         return json
     },
+
+    getParkSpaces: async (token) => {
+        const req = await fetch(`${BASE_API}/parkSpaces`, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${token}` 
+            }
+        })
+        const json = await req.json()
+        return json
+    },
+
+    updateParkSpaceByID: async (parkSpaceId, status, token) => {
+        const req = await fetch(`${BASE_API}/parkSpace/${parkSpaceId}`, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${token}` 
+            },
+            body: JSON.stringify({ status })
+        })
+        const json = await req.json()
+        return json
+    }
 }

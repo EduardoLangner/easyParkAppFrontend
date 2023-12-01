@@ -1,47 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Container, ImageEllipsis, SquareBlue, CustomTextTime, CustomTextTimeContainer, AddPlateContainer, AddPlateText, ImageCar, InputArea } from './styles';
-import { View, TouchableOpacity, StatusBar } from 'react-native';
+import { Container, ImageEllipsis, SquareBlue, ModalBlack, ModalBlue, ModalContent, TextContainer } from './styles';
+import { View, TouchableOpacity, StatusBar, Text } from 'react-native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
+import { useNavigation } from '@react-navigation/native';
 
 import EllipsisBlue from '../../assets/EllipsisBlue.png';
-import Car from '../../assets/Car.png';
 
-import Input from '../../components/Input';
 import CustomButton from '../../components/Button';
 
 import Api from '../../Api.js';
 
 export default () => {
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [plateField, setPlateField] = useState('');
-    const [userPlates, setUserPlates] = useState([]);
-    const [token, setToken] = useState(null);
-    const [accountBalance, setAccountBalance] = useState(0);
 
-    const carIcon = { type: 'FontAwesome', name: 'car' };
+    const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
 
-    useEffect(() => {
-        async function fetchUserPlates() {
-            const userID = await getTokenFromStorage();
-            if (userID) {
-                const plates = await Api.getPlate(userID, token);
-                setUserPlates(plates);
-            }
-        }
+    const navigation = useNavigation();
 
-        fetchUserPlates();
-    }, [token]);
-
-
-    const handleAddPlateText = () => {
-        setModalVisible(true);
+    const handleMeusDadosPress = () => {
+        navigation.navigate('User');
     };
 
-    const closeModal = () => {
-        setModalVisible(false);
+    const handleMeusVeiculossPress = () => {
+        navigation.navigate('Vehicles');
+    };
+
+    const handlePerguntasPress = () => {
+        navigation.navigate('Answers');
     };
 
     const getTokenFromStorage = async () => {
@@ -60,94 +47,86 @@ export default () => {
         }
     };
 
-    const HandleAddPlate = async () => {
-        const userID = await getTokenFromStorage();
-
-        if (plateField !== '' && userID) {
-            try {
-                let res = await Api.addPlate(plateField, userID, token); 
-                console.log('Response from addPlate:', res);
-                setUserPlates(prevPlates => {
-                    if (!Array.isArray(prevPlates)) {
-                        return [{ plate: plateField }];
-                    }
-                    return [{ plate: plateField }, ...prevPlates];
-                });
-                alert('Placa cadastrada com sucesso!');
-                setModalVisible(false);
-            } catch (error) {
-                console.error('Error adding plate:', error);
-            }
-        }
-    };  
-
-    const HandleGetAccountBalance = async () => {
-        const userID = await getTokenFromStorage();
-        let res = await Api.getUserByID(userID, token);
-        
-        const formattedBalance = parseFloat(res.account_balance).toLocaleString('pt-BR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
-    
-        setAccountBalance(formattedBalance);
+    const handleLogoutModal = () => {
+        setLogoutModalVisible(true);
     };
 
-    useEffect(() => {
-        HandleGetAccountBalance();
-    }, [token]);
+    const closeLogoutModal = () => {
+        setLogoutModalVisible(false);
+    };
 
     return (
         <Container>
             <SquareBlue />
             <ImageEllipsis source={EllipsisBlue} />
-            <AddPlateContainer>
-                <ImageCar source={Car} />
-                <TouchableOpacity onPress={handleAddPlateText}>
-                    <AddPlateText>
-                        {userPlates.length === 0
-                            ? 'CADASTRAR'
-                            : `${userPlates[0]?.plate || ''}`}
-                    </AddPlateText>
-                </TouchableOpacity>
-            </AddPlateContainer>
-            <CustomTextTimeContainer marginTop="7%">
-                <CustomTextTime fontSize="23px" color="#ffffff">Saldo disponível</CustomTextTime>
-                <CustomTextTime fontSize="28px" color="#ffffff">R$ {accountBalance}</CustomTextTime>
-            </CustomTextTimeContainer>
-            <Modal isVisible={isModalVisible} style={{ justifyContent: 'center', alignItems: 'center', height: 10 }}>
+            <ModalContent>
+                <ModalBlue>
+                    <TouchableOpacity style={{marginTop: 30}} onPress={handleMeusDadosPress}>
+                        <TextContainer style={{marginLeft: 20}}>
+                            <Icon name="user" size={20} color="#fff" style={{marginLeft: 5}} />
+                            <Text style={{color: "#fff", marginLeft: 10, fontSize: 20}}> Meus Dados</Text>
+                        </TextContainer>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleMeusVeiculossPress}>
+                        <TextContainer style={{marginLeft: 20}}>
+                            <Icon name="car" size={20} color="#fff" />
+                            <Text style={{color: "#fff", marginLeft: 8, fontSize: 20}}> Meus Veículos</Text>
+                        </TextContainer>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <TextContainer style={{marginLeft: 22}}>
+                            <Icon name="envelope" size={20} color="#fff" />
+                            <Text style={{color: "#fff", marginLeft: 10, fontSize: 20}}> Fale Conosco</Text>
+                        </TextContainer>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handlePerguntasPress}>
+                        <TextContainer style={{marginLeft: 25}} >
+                            <Icon name="question" size={28} color="#fff" />
+                            <Text style={{color: "#fff", marginLeft: 10, fontSize: 20}}> Perguntas Frequentes</Text>
+                        </TextContainer>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleLogoutModal}>
+                        <TextContainer style={{marginLeft: 25}}>
+                            <Icon name="sign-out" size={20} color="#fff" />
+                            <Text style={{color: "#fff", marginLeft: 10, fontSize: 20}}> Sair</Text>
+                        </TextContainer>
+                    </TouchableOpacity>
+                </ModalBlue>
+                <ModalBlack />
+            </ModalContent>
+            <Modal isVisible={isLogoutModalVisible} style={{ justifyContent: 'center', alignItems: 'center', height: 10 }}>
                 <StatusBar translucent backgroundColor="rgba(0, 0, 0, 0.7)" barStyle="white" />
                 <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff', width: 300, height: 300, borderRadius: 20 }}>
-                    <TouchableOpacity style={{ position: 'absolute', top: -20, right: -20, zIndex: 1 }} onPress={closeModal}>
+                    <TouchableOpacity style={{ position: 'absolute', top: -20, right: -20, zIndex: 1 }} onPress={closeLogoutModal}>
                         <View style={{ width: 40, height: 40, backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
                             <Icon name="times" size={20} color="white" />
                         </View>
                     </TouchableOpacity>
                     <View style={{ padding: 20 }}>
-                    <InputArea>
-                        <Input
-                            placeholder="Digite a Placa"
-                            icon={carIcon}
-                            value={plateField}
-                            onChangeText={setPlateField}
-                            password={false}
-                            fontSize="20px"
-                        />
-                        <CustomButton
-                            color="#1AD61A"
-                            width="200px"
-                            height="35%"
-                            fontSize="25px" 
-                            textColor="#ffffff"
-                            text="Cadastrar"
-                            borderRadius="50px"
-                            marginTop="10%"
-                            onPress={HandleAddPlate}
-                        />
-                    </InputArea>
+                        <Text style={{ fontSize: 25, color: '#000000', fontWeight: 'bold', textAlign: 'center' }}>Deseja relamente sair?</Text>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: '10%', width: "80%" }}>
+                            <CustomButton
+                                color="#1AD61A"
+                                width="100px"
+                                height="55px"
+                                fontSize="25px" 
+                                textColor="#ffffff"
+                                text="Sim"
+                                borderRadius="50px"
+                            />
+                            <CustomButton
+                                color="#FF0000"
+                                width="100px"
+                                height="55px"
+                                fontSize="25px" 
+                                textColor="#ffffff"
+                                text="Não"
+                                borderRadius="50px"
+                            />
+                        </View>
                     </View>
                 </View>
             </Modal>
         </Container>
-    )
+    );
 }

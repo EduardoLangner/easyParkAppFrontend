@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Container, ImageEllipsis, SquareBlue, CustomTextTime, CustomTextTimeContainer, AddPlateContainer, AddPlateText, ImageCar, InputArea } from './styles';
-import { View, TouchableOpacity, StatusBar } from 'react-native';
+import { View, TouchableOpacity, StatusBar, Image } from 'react-native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import EllipsisBlue from '../../assets/EllipsisBlue.png';
 import Car from '../../assets/Car.png';
+import ParkingFree from '../../assets/ParkingFree.png';
+import ParkingOccupied from '../../assets/ParkingOccupied.png';
+import ParkingElderly from '../../assets/ParkingElderly.png';
+import ParkingSpecial from '../../assets/ParkingSpecial.png';
 
 import Input from '../../components/Input';
 import CustomButton from '../../components/Button';
@@ -21,8 +25,37 @@ export default () => {
     const [userPlates, setUserPlates] = useState([]);
     const [token, setToken] = useState(null);
     const [accountBalance, setAccountBalance] = useState(0);
+    const [parkingSpaces, setParkingSpaces] = useState([]);
+    const [initialRegion, setInitialRegion] = useState(null);
 
     const carIcon = { type: 'FontAwesome', name: 'car' };
+
+    useEffect(() => {
+        async function fetchParkingSpaces() {
+            try {
+                const spaces = await Api.getParkSpaces(token);
+                setParkingSpaces(spaces);
+
+                const hasStatusChanged = spaces.some((space, index) => {
+                    return space.status !== parkingSpaces[index]?.status;
+                });
+
+                if (spaces.length > 0) {
+                    const firstSpace = spaces[0];
+                    setInitialRegion({
+                        latitude: parseFloat(firstSpace.latitude),
+                        longitude: parseFloat(firstSpace.longitude),
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching parking spaces:', error);
+            }
+        }
+
+        fetchParkingSpaces();
+    }, [token, parkingSpaces]);
 
     useEffect(() => {
         async function fetchUserPlates() {
@@ -98,6 +131,8 @@ export default () => {
         HandleGetAccountBalance();
     }, [token]);
 
+    const position = [51.505, -0.09]
+
     return (
         <Container>
             <SquareBlue />
@@ -150,10 +185,36 @@ export default () => {
                 </View>
             </Modal>
             <View style={{ flex: 1 }}>
-                <MapView 
+            <MapView 
                     provider={PROVIDER_GOOGLE} 
                     style={{width: 400, height: 600, marginTop: -15}}
-                />
+                    initialRegion={initialRegion} 
+                >
+                    {parkingSpaces.map(space => (
+                        <Marker
+                            key={space.id}
+                            coordinate={{
+                                latitude: parseFloat(space.latitude),
+                                longitude: parseFloat(space.longitude),
+                            }}
+                            title={`Vaga ${space.id}`}
+                            description={`Tipo: ${space.type}, Status: ${space.status}, Token: ${space.token}`}
+                        >
+                            <Image
+                                source={
+                                    space.status === 'free'
+                                        ? ParkingFree
+                                        : space.status === 'occupied'
+                                        ? ParkingOccupied
+                                        : space.type === 'Elderly'
+                                        ? ParkingElderly
+                                        : ParkingSpecial
+                                }
+                                style={{ width: 30, height: 30 }}
+                            />
+                        </Marker>
+                    ))}
+                </MapView>
             </View>
         </Container>
     )

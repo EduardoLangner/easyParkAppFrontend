@@ -239,8 +239,6 @@ export default () => {
             setCreditCardNumber(firstCreditCard.credit_card_number);
             setNameCreditCard(firstCreditCard.credit_card_name);
 
-            console.log('Credit Card Number:', creditCardNumber);
-            console.log('Name Credit Card:', nameCreditCard);
         }
     };
 
@@ -431,7 +429,7 @@ export default () => {
                             onChangeText={(text) => {
                                 setCard({ ...card, validate: text })
                                 animatedCard(false)
-                                setValidateCreditCardField(text)                            }}
+                                setValidateCreditCardField(text)}}
                             type="custom"
                             options={{
                                 mask: '99/99'
