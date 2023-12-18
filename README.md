@@ -1,6 +1,6 @@
 # Easy Park
 
-## Easy Park é um projeto de TCC, que consiste em um aplicativo para gerenciamento de estacionamentos com uma feature única de visualização de vagas em tempo real. A API consiste em ma integração com o GoogleMaps para toda a geolocalização e integração com a AsaasAPI para a getway de pagamento.
+## Easy Park é um projeto de TCC, que consiste em um aplicativo para gerenciamento de estacionamentos com uma feature única de visualização de vagas em tempo real. A API consiste na integração com o GoogleMaps para toda a geolocalização e integração com a AsaasAPI para a getway de pagamento.
 
 ## Principais telas do aplicativo e suas funcionalidades:
 
