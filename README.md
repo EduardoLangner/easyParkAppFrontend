@@ -27,6 +27,8 @@
 ### Mapa
 #### O mapa de vagas é uma tela que permite ao usuário visualizar no mapa as vagas de estacionamento disponíveis. Nessa tela, todas as vagas da zona azul da cidade são exibidas, com os pontos verdes indicando disponibilidade e os pontos vermelhos indicando ocupação.
 
+![image-removebg-preview (5)](https://github.com/EduardoLangner/easyParkAppFrontend/assets/69880659/2e653851-4f14-4f44-a169-03b78e2257b3)
+
 ### Menu
 #### Nesta tela, estão disponíveis os dados do usuário, como nome, CPF e email, que podem ser visualizados pelo usuário. Além disso, há a seção "Meus Veículos," onde as informações sobre os veículos registrados ficam disponíveis para visualização. A tela também inclui uma seção de contato, juntamente com uma aba de perguntas frequentes, proporcionando um recurso útil de suporte.
 
